@@ -1,0 +1,322 @@
+<div class="abmex-container">
+    <div *ngIf="isLoading" class="loading-screen">
+        <div class="loading-spinner" *ngIf="!askReload"></div>
+        <p *ngIf="!askReload">Carregando...</p>
+        <div class="loadingError" *ngIf="askReload">
+            <p>Opa, parece que algo não saiu como esperado 😕</p>
+            <p>Tente fechar e abrir o aplicativo enquanto organizamos tudo em 1 minutinho.</p>
+            <p>Se o problema persistir, manda um email para <a href="mailto:meajuda@foodtosave.com"
+                    class="negativeLink">meajuda@foodtosave.com</a>. Estamos aqui para te ajudar! 😊</p>
+        </div>
+    </div>
+
+    <!-- <button (click)="copyClipboard()">
+        {{ token }}
+    </button> -->
+
+
+    <div class="abmex" [hidden]="!isEnableChat">
+
+        <div class="btn-back">
+            <span class="material-symbols-outlined" style="padding: 10px 10px; cursor: pointer; color: white;"
+                (click)="backMenu()">
+                chevron_left
+            </span>
+        </div>
+
+
+        <div id="abmex-chat">
+
+        </div>
+    </div>
+
+    <div class="abmex" *ngIf="!isEnableQuestion && !isEnableChat && !enableTabs">
+        <div class="container">
+            <div class="row header">
+                <div class="col-md-12 logo">
+                    <img src="./../../assets/food_save_logo.png" alt="">
+                </div>
+            </div>
+
+            <div class="row hero">
+                <div class="col-md-12">
+                    <h1>
+                        olá {{firstName}}!<br>
+                        como podemos ajudar?
+                    </h1>
+                </div>
+            </div>
+
+            <div class="row card-faq chat-option" style="cursor: pointer;"
+                *ngIf="!currentTab || currentTab.length === 0">
+                <div class="col-md-12">
+                    <h2>Dúvidas frequentes</h2>
+                </div>
+
+                <div class="col-12" (click)="currentTab = 'pedidoAtrasado'">
+
+                    <menu-option [option]="{
+                        name: 'Problemas na entrega e/ou retirada',
+                        icon: 'chevron_right'
+                    }"></menu-option>
+
+                </div>
+
+                <div class="col-12" (click)="currentTab = 'problemasPedido'">
+                    <menu-option [option]="{
+                        name: 'Problemas com pedido recebido',
+                        icon: 'chevron_right'
+                    }"></menu-option>
+                </div>
+
+                <div class="col-12" *ngIf="currentOrder" (click)="[currentTab = 'desistenciaCompra', canCancelOrder()]">
+                    <menu-option [option]="{
+                        name: 'Desistência de compra',
+                        icon: 'chevron_right'
+                    }"></menu-option>
+                </div>
+
+                <div class="col-12" (click)="currentTab = 'pagamento'">
+                    <menu-option [option]="{
+                        name: 'Dúvidas sobre pagamento',
+                        icon: 'chevron_right'
+                    }"></menu-option>
+                </div>
+
+                <div class="col-12" (click)="currentTab = 'parceiro'">
+                    <menu-option [option]="{
+                        name: 'Quero ser parceiro',
+                        icon: 'chevron_right'
+                    }"></menu-option>
+                </div>
+
+                <div class="col-12" (click)="currentTab = 'outrosAssuntos'">
+                    <menu-option [option]="{
+                        name: 'Outros assuntos',
+                        icon: 'chevron_right'
+                    }"></menu-option>
+                </div>
+            </div>
+
+            <menu-section [menuSection]="menu.logistics" [currentTab]="currentTab" tabName="pedidoAtrasado"
+                (backToMain)="backMainMenu()" (optionSelected)="openProductWrong($event)">
+            </menu-section>
+
+            <menu-section [menuSection]="menu.afterSales" [currentTab]="currentTab" tabName="problemasPedido"
+                (backToMain)="backMainMenu()" (optionSelected)="openProblemProduct($event)">
+            </menu-section>
+
+            <menu-section [menuSection]="menu.payments" [currentTab]="currentTab" tabName="pagamento"
+                (backToMain)="backMainMenu()" (optionSelected)="openPaymentQuestions($event)">
+            </menu-section>
+
+            <menu-section [menuSection]="menu.partners" [currentTab]="currentTab" tabName="parceiro"
+                (backToMain)="backMainMenu()" (optionSelected)="openPaymentQuestions($event)">
+            </menu-section>
+
+            <menu-section [menuSection]="menu.others" [currentTab]="currentTab" tabName="outrosAssuntos"
+                (backToMain)="backMainMenu()" (optionSelected)="openOtherQuestions($event)">
+            </menu-section>
+
+            <div class="row abmex-question pb-5 rounded-xl justify-center" *ngIf="currentTab === 'desistenciaCompra'">
+                <div class="container h-5" *ngIf="currentTab === 'desistenciaCompra'">
+
+                    <div class="question-container-header">
+                        <div class="row" style="padding-top: 25px;">
+                            <div class="col-4">
+                                <span class="material-symbols-outlined" style="cursor: pointer;" (click)="backMenu()">
+                                    chevron_left
+                                </span>
+                            </div>
+                            <div class="col-2"></div>
+                        </div>
+                    </div>
+
+                    <div class="question-container-body" id="scroll-body-conversation">
+                        <ng-container *ngFor="let message of messages">
+                            <div class="row"
+                                [ngClass]="{ 'card-faq-question-bot': message.direction === 'bot', 'card-faq-question-user': message.direction === 'user' }">
+                                <div class="col-md-12">
+                                    <p [innerHTML]="message.text">
+                                    </p>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+
+                    <ng-container>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p *ngIf="!orderCanceled && !isCancellable">
+                                    olá {{firstName}},<br><br>
+                                    Entendo que você deseja cancelar seu pedido. {{ reason }}
+                                </p>
+
+                                <ng-container *ngIf="currentOrder && isCancellable">
+
+                                    <ng-container *ngIf="!orderCanceled">
+                                        <p>
+                                            olá {{firstName}},<br><br>
+                                            Entendo que você deseja cancelar seu pedido número {{currentOrder.number}}.
+                                            Podemos prosseguir com o cancelamento?
+                                        </p>
+
+                                        <div class="tag" *ngIf="!cancelReason || cancelReason.length === 0"
+                                            (click)="[cancelReason = 'ANY', canCancelOrder()]">
+                                            <p>Sim, cancelar</p>
+                                        </div>
+
+                                        <p *ngIf="cancelReason && cancelReason.length > 0 && cancelReason == 'ANY'">
+                                            informe por favor o motivo do cancelamento:
+                                        </p>
+
+                                        <select name="" id="" [(ngModel)]="cancelReason"
+                                            *ngIf="cancelReason && cancelReason.length > 0">
+                                            <ng-container *ngFor="let reason of cancelReasons">
+                                                <option [value]="reason.title"
+                                                    *ngIf="this.currentOrder?.delivery_type == reason.type">
+                                                    {{reason.title}}
+                                                </option>
+                                            </ng-container>
+                                        </select>
+
+                                        <div class="tag" (click)="cancelOrder()"
+                                            *ngIf="cancelReason && cancelReason.length > 0 && cancelReason != 'ANY'">
+                                            <p>Confirmar cancelamento</p>
+                                        </div>
+
+
+                                    </ng-container>
+
+                                    <ng-container *ngIf="orderCanceled">
+                                        <p>seu pedido {{currentOrder.number}} foi cancelado e seguiremos com o
+                                            reembolso.
+                                            para cartão de crédito, pode levar de 1-2 ciclos de fatura. para PIX, em
+                                            média
+                                            24h. em caso de dúvidas, consulte sua instituição financeira.</p>
+                                        <br>
+                                        <p>aguarde alguns instantes para a informação atualizar. basta recarregar a
+                                            página
+                                            de pedidos no app depois.</p>
+                                    </ng-container>
+
+                                    <div class="tag" (click)="backMenu()">
+                                        <p>{{ (cancelReason && cancelReason.length > 0) || orderCanceled ? 'Voltar ao
+                                            menu' : 'Não,
+                                            obrigado'
+                                            }} </p>
+                                    </div>
+
+                                </ng-container>
+
+                                <ng-container *ngIf="currentOrder && isCancellable">
+                                    {{ reason }}
+                                </ng-container>
+                            </div>
+                        </div>
+
+                        <div class="row" *ngIf="!orderCanceled && !isCancellable">
+                            <div *ngIf="canOpenChat">
+                                <div class="col-12">
+                                    <p style="text-align: center; font-weight: bold;">
+                                        essa informação foi útil pra você?
+                                    </p>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12" style="justify-content: center;">
+                                        <span class="tag" style="cursor: pointer; margin-right: 5px;"
+                                            (click)="[feedback('positive'), backMenu()]">
+                                            Sim
+                                        </span>
+                                        <span class="tag" (click)="feedback('negative','cancelar')">
+                                            Não, quero continuar com atendimento!
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="!canOpenChat">
+                                <div class="tag" (click)="backMenu()">
+                                    <p>Voltar ao menu</p>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+
+
+
+                </div>
+            </div>
+            <div class="row abmex-question pb-5 rounded-xl justify-center" *ngIf="currentTab === 'duvidasRastreio'">
+                <div class="container h-5" *ngIf="currentTab === 'duvidasRastreio'">
+
+                    <div class="question-container-header">
+                        <div class="row" style="padding-top: 25px;">
+                            <div class="col-4">
+                                <span class="material-symbols-outlined" style="cursor: pointer;" (click)="backMenu()">
+                                    chevron_left
+                                </span>
+                            </div>
+                            <div class="col-2"></div>
+                        </div>
+                    </div>
+
+                    <div class="question-container-body" id="scroll-body-conversation">
+                        <ng-container *ngFor="let message of messages">
+                            <div class="row"
+                                [ngClass]="{ 'card-faq-question-bot': message.direction === 'bot', 'card-faq-question-user': message.direction === 'user' }">
+                                <div class="col-md-12">
+                                    <p [innerHTML]="message.text">
+                                    </p>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+
+                    <ng-container>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p>
+                                    olá {{firstName}},<br><br>
+                                    Entendo que você tem dúvidas sobre o rastreio do pedido {{currentOrder?.number || ''}}. <br/> <br/>{{ reason || '' }}
+                                </p>
+
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div *ngIf="canOpenChat">
+                                <div class="col-12">
+                                    <p style="text-align: center; font-weight: bold;">
+                                        essa informação foi útil pra você?
+                                    </p>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12" style="justify-content: center;">
+                                        <span class="tag" style="cursor: pointer; margin-right: 5px;"
+                                            (click)="[feedback('positive'), backMenu()]">
+                                            Sim
+                                        </span>
+                                        <span class="tag" (click)="feedback('negative','cancelar')">
+                                            Não, quero continuar com atendimento!
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="!canOpenChat">
+                                <div class="tag" (click)="backMenu()">
+                                    <p>Voltar ao menu</p>
+                                </div>
+
+                            </div>
+                        </div>
+                    </ng-container>
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>

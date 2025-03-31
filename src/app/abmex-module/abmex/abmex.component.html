@@ -1,0 +1,30 @@
+<app-abmex-home
+    *ngIf="tab === 'home'"
+    (onGoQuestion)="changeTab('question')"
+    (onGoHome)="changeTab('home')"
+    (onGoQuestions)="changeTab('questions')"
+    (onGoChat)="changeTab('chat')"
+></app-abmex-home>
+<app-abmex-question
+    *ngIf="tab == 'question'"
+    (onGoQuestion)="changeTab('question')"
+    (onGoHome)="changeTab('home')"
+    (onGoQuestions)="changeTab('questions')"
+    (onGoChat)="changeTab('chat')">
+</app-abmex-question>
+
+<app-abmex-questions
+    *ngIf="tab == 'questions'"
+    (onGoQuestion)="changeTab('question')"
+    (onGoHome)="changeTab('home')"
+    (onGoQuestions)="changeTab('questions')"
+    (onGoChat)="changeTab('chat')">
+</app-abmex-questions>
+
+<app-abmex-chats
+    *ngIf="tab == 'chat'"
+    (onGoQuestion)="changeTab('question')"
+    (onGoHome)="changeTab('home')"
+    (onGoQuestions)="changeTab('questions')"
+    (onGoChat)="changeTab('chat')">
+</app-abmex-chats>

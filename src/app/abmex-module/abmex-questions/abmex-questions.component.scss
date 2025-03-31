@@ -1,0 +1,115 @@
+.abmex {
+    width: 400px;
+    background: #fff;
+    position: fixed;
+    bottom: 84px;
+    right: 20px;
+    height: calc(100% - 104px);
+    min-height: calc(100% - 104px);
+    box-shadow: rgb(0 0 0 / 16%) 0px 5px 40px;
+    border-radius: 16px;
+    overflow: hidden;
+    opacity: 1;
+    transform-origin: right bottom;
+    transition: width 200ms ease 0s, height 200ms ease 0s, max-height 200ms ease 0s, transform 300ms cubic-bezier(0, 1.2, 1, 1) 0s, opacity 83ms ease-out 0s;
+    pointer-events: all;
+    overflow-y: auto;
+    padding-bottom: 100px;
+}
+
+.back-home {
+    color: #404040;
+    position: absolute;
+    top: 80px;
+    position: absolute;
+    top: 20px;
+    left: -30px;
+    span {
+        font-size: 36px;
+    }
+}
+
+
+.logo {
+    img{
+        width: 32px;
+    }
+    text-align: right;
+}
+
+.header {
+    padding-top: 32px
+}
+
+.question-header {
+    padding-top: 40px;
+}
+
+.footer-options {
+    display: flex;
+    flex-direction: row;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    font-size: 14px;
+    line-height: 21px;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: rgb(0 0 0 / 5%) 0px 0px 25px;
+    background-color: rgb(255, 255, 255);
+    height: 80px;
+    padding: 0px;
+    position: fixed;
+    width: 400px;
+    bottom: 84px;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+
+    .row {
+        height: 100%;
+        margin: 0px;
+    }
+    .faq-option {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        span {
+            display: block;
+        }
+    }
+}
+
+.faq-question {
+    border-bottom: 1px solid #efefef;
+    padding: 12px 0px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    .faq-question-icon {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }
+    .faq-question-title {
+        text-align: left;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+    &:hover {
+        background-color: rgb(255, 122, 1, 0.6);
+        .faq-question-title {
+            color: #fe3d01
+        }
+    }
+    span {
+        font-size: 18px;
+    }
+}
+
+.nps{
+    display: flex;
+    justify-content: center;
+    span {
+        padding: 0px 16px;
+        font-size: 22px;
+    }
+}

@@ -1,0 +1,93 @@
+<div class="abmex">
+    <div class="container">
+        <div class="back-home">
+            <span class="material-symbols-outlined" (click)="goHome()">
+                chevron_left
+            </span>
+        </div>
+        <div class="row header">
+            <div class="col-2">
+                
+            </div>
+            <div class="col-10 logo">
+                <img src="./../../assets/icon.png" alt="">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 question-header">
+                <h1 style="text-align: center;">
+                    Ajuda
+                </h1>
+            </div>
+            <div class="col-md-12">
+
+                <div class="row faq-question"  (click)="goQuestion()">
+                    <div class="col-10">
+                        <div class="faq-question-title">
+                            Como acesso meu curso?
+                        </div>
+                    </div>
+                    <div class="col-2 faq-question-icon">
+                        <span class="material-symbols-outlined">
+                            chevron_right
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="row faq-question" (click)="goQuestion()">
+                    <div class="col-10">
+                        <div class="faq-question-title">
+                            Como altero meu e-mail de acesso?
+                        </div>
+                    </div>
+                    <div class="col-2 faq-question-icon">
+                        <span class="material-symbols-outlined">
+                            chevron_right
+                        </span>
+                    </div>
+                </div>
+
+                <div class="row faq-question" (click)="goQuestion()">
+                    <div class="col-10">
+                        <div class="faq-question-title">
+                            Quero cancelar
+                        </div>
+                    </div>
+                    <div class="col-2 faq-question-icon">
+                        <span class="material-symbols-outlined">
+                            chevron_right
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-options">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 faq-option">
+                    <span class="material-symbols-outlined" (click)="goHome()">
+                        home
+                    </span>
+                    Início
+                </div>
+                <div class="col-md-4 faq-option">
+                    <span class="material-symbols-outlined" (click)="goChats()">
+                        sms
+                    </span>
+                    Mensagens
+                </div>
+                <div class="col-md-4 faq-option"  (click)="goQuestions()">
+                    <span class="material-symbols-outlined">
+                        help
+                    </span>
+                    Ajuda
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

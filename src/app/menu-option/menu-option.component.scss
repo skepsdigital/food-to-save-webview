@@ -1,0 +1,18 @@
+:host {
+    display: block;
+    width: 100%;
+    
+    p {
+        font-size: 14px;
+        text-align: left;
+        padding: 8px 12px;
+        margin: 0px;
+        font-weight: 400;
+        line-height: 1.5;
+    }
+  
+    .chat-option-icon {
+      display: flex;
+      align-items: center;
+    }
+  }

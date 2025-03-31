@@ -1,0 +1,61 @@
+/* You can add global styles to this file, and also import other style files */
+@import 'blip-toolkit/dist/scss/main';
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: $bp-ff;
+}
+
+.material-symbols-outlined {
+  cursor: pointer;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+body {
+  background-color: $bp-color-whisper;
+  color: $bp-color-rooftop;
+}
+
+a {
+  color: red;
+  text-decoration: none;
+}
+
+#main {
+  margin: 10px auto;
+  width: 80%;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+.bp-tabs-container .bp-tab-content {
+  padding-top: 20px;
+}
+
+.w6 {
+  width: 24rem;
+}
+
+.align-right {
+  text-align: right;
+}
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+p, div, h1, h2, h3, h4, h5, h6, li {
+  font-family: 'Inter', sans-serif !important;
+}

@@ -1,0 +1,23 @@
+<div class="row card-faq chat-option" style="cursor: pointer;" *ngIf="currentTab === tabName">
+  <div class="col-md-12">
+    <h2>{{menuSection?.title || ''}}</h2>
+  </div>
+  
+  <!-- Generate menu options dynamically from menuSection.options -->
+  <ng-container *ngIf="menuSection?.options?.length">
+    <div class="col-12" *ngFor="let option of menuSection.options" (click)="onOptionClick(option)">
+      <menu-option [option]="{
+        name: option,
+        icon: 'chevron_right'
+      }"></menu-option>
+    </div>
+  </ng-container>
+  
+  <!-- Custom content if any -->
+  <ng-content></ng-content>
+  
+  <!-- Back to menu button -->
+  <div class="col-12" (click)="goBack()">
+    <menu-option [option]="{name: 'Voltar ao menu inicial', icon: 'chevron_right'}"></menu-option>
+  </div>
+</div>
