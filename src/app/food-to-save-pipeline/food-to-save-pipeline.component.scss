@@ -1,0 +1,103 @@
+.filter-pipeline {
+    margin: 40px 0px;
+    padding: 16px;
+    width: 100%;
+    background: #ffffff;
+    /* box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1); */
+    border: 1px solid #f0ebeb;
+    border-radius: 8px !important;
+    position: relative;
+}
+.card-pipeline {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px;
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #f0ebeb;
+    border-radius: 8px !important;
+    position: relative;
+
+    h4 { 
+        max-width: 100%;
+        word-break: break-all;
+    }
+
+    p { 
+        max-width: 100%;
+        word-break: break-all;
+    }
+}
+
+.pipeline-head {
+    .col-md-4 {
+        border-right: 1px solid #f0ebeb;
+    }
+    h4 {
+        color: #45ce8b;
+        font-weight: 700;
+    }
+}
+
+.pipeline-stage {
+    border-right: 1px solid #f0ebeb;
+    .card-pipeline {
+        width: 90%;
+        margin: 5px auto;
+        h4 {
+            font-size: 14px;
+        }
+        p {
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+        select {
+            width: 100%;
+            margin: 5px 0px;
+            font-size: 12px;
+        }
+
+    }
+}
+
+.filter-text {
+    select {
+        width: 95%;
+    }
+    input {
+        width: 95%;
+    }
+}
+.notification-app-container {
+    width: 100%;
+    height: 100vh;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .notification-app {
+        width: 400px;
+        height: auto;
+
+        .form-input-container {
+            padding: 5px 0px;
+        }
+
+        input {
+            width: 100%;
+        }
+
+        button {
+            margin-top: 15px;
+            width: 100%;
+            background-color: #00CD8A;
+            border: 0px;
+            color: #fff;
+        }
+
+        img {
+            padding-bottom: 25px;
+        }
+    }
+}

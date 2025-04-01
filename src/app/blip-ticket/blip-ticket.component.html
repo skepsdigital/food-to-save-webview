@@ -1,0 +1,200 @@
+<div class="container">
+    <div class="row" style="padding: 40px 0px;">
+        <img src="./../../assets/food_to_save_orange.png" alt="" style="width: 64px;">
+    </div>
+</div>
+
+<div class="container">
+    <ng-container *ngFor="let item of teams">
+        <div class="row team" *ngIf="item.team">
+            <div class="col-md-6">
+                <h2>
+                    {{ item.team }}
+                </h2>
+            </div>
+            <div class="col-md-5">
+                <p class="tag">
+                    Novos: {{ item.Novo }}, Abertos: {{ item.Aberto }}, Pendente: {{ item.Pendente }}, Resolvido: {{ item.Resolvido }}
+                </p>
+            </div>
+            <div class="col-md-1" style="text-align: right;">
+                <span class="material-symbols-outlined" (click)="showDetails(item)">
+                    {{ item.details ? 'arrow_drop_up' : 'arrow_drop_down' }}
+                </span>
+            </div>
+    
+            <ng-container *ngIf="item.details">
+                <div class="col-md-12 team-details">
+                    <p style="padding-top: 15px; margin: 0px; font-weight: 700;">
+                        Selecione um filtro:
+                    </p>
+        
+                    <div class="row filters">
+                        <div class="col-md-12">
+                            <button (click)="changeTeamFilter(item, 'Novo')" [ngClass]="{ 'selected-filter': item.filter == 'Novo' }">
+                                Novos
+                            </button>
+                            <button (click)="changeTeamFilter(item, 'Aberto')" [ngClass]="{ 'selected-filter': item.filter == 'Aberto' }">
+                                Abertos
+                            </button>
+                            <button (click)="changeTeamFilter(item, 'Pendente')" [ngClass]="{ 'selected-filter': item.filter == 'Pendente' }">
+                                Pendente
+                            </button>
+                            <button (click)="changeTeamFilter(item, 'Resolvido')" [ngClass]="{ 'selected-filter': item.filter == 'Resolvido' }">
+                                Resolvido
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12" style="padding: 10px 0px;" *ngIf="item.filter">
+                    <label for="" style="color: #fff;">Transferir em massa para:</label>
+                    <select name="" id="" (change)="transferTickets($event, item)">
+                        <option value=""></option>
+                        <option [value]="agent.identity" *ngFor="let agent of attendants">{{ agent.email }}</option>
+                    </select>
+                </div>
+        
+                <div class="col-md-12 table-tickets" *ngIf="item.filter">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table">
+                                <thead>
+                                    <th>
+                                        #ID
+                                    </th>
+                                    <th>
+                                        #SeqId
+                                    </th>
+                                    <th>
+                                        E-mail
+                                    </th>
+                                    <th>
+                                        Abertura
+                                    </th>
+                                    <th>
+                                        Atendente
+                                    </th>
+                                    <th>
+                                        Transferir
+                                    </th>
+                                    <th>
+                                        Selecionar
+                                    </th>
+                                </thead>
+                                <tbody>
+                                    <ng-container *ngFor="let ticket of item.tickets">
+                                        <tr *ngIf="!item.filter || (ticket.tags && ticket.tags.length > 0 && hasTag(item.filter, ticket.tags))">
+                                            <td>
+                                                {{ ticket.customerIdentity.split('@0mn.io')[0].split('.').pop() }}
+                                            </td>
+                                            <td>
+                                                {{ ticket.sequentialId }}
+                                            </td>
+                                            <td>
+                                                {{ getCustomerEmail(ticket.customerIdentity.split('@0mn.io')[0].split('.').pop(), ticket.customerIdentity) }}
+                                            </td>
+                                            <td>
+                                                {{ ticket.openDate | date : 'dd/MM/yyyy HH:mm' }}
+                                            </td>
+                                            <td>
+                                                {{ ticket.agentIdentity ? ticket.agentIdentity.split('@')[0].replace('%40', '@') : '-' }}
+                                            </td>
+                                            <td>
+                                                <ng-container *ngIf="ticket.status.indexOf('Close') === -1 && ticket.status.indexOf('Transf') === -1">
+                                                    <select name="" id="" (change)="transferTicketToAgent(ticket.id, $event, ticket.team)">
+                                                        <option value=""></option>
+                                                        <option [value]="agent.identity" *ngFor="let agent of attendants">{{ agent.email }}</option>
+                                                    </select>
+                                                </ng-container>
+                                            </td>
+                                            <td>
+                                                <input type="checkbox" [checked]="ticket.checked" (change)="ticket.checked = !ticket.checked">
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+            
+        </div>
+    </ng-container>
+    
+</div>
+
+<div class="container" style="padding-top: 50px">
+
+    <ng-container *ngIf="showCreateTicketSuccess">
+        <div class="row">
+            <div class="col-md-12">
+                <p>
+                    {{ createTicketMsg }}
+            </div>
+            <div class="col-md-12" style="text-align: center;padding-top: 25px">
+                <button (click)="showCreateTicketSuccess = false">
+                    Criar novo ticket
+                </button>
+            </div>
+        </div>
+    </ng-container>
+    
+
+    <ng-container *ngIf="!showCreateTicketSuccess">
+
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Criar um novo ticket</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" name="email" [(ngModel)]="newTicket.email">
+                <p style="margin: 0px; font-size: 10px; color: red">
+                    {{ newTicket.email ? '' : 'Digite um e-mail para prosseguir' }}
+                </p>
+            </div>
+            <div class="col-md-6">
+                <label for="name">Nome</label>
+                <input type="text" id="name" name="name" [(ngModel)]="newTicket.name">
+                <p style="margin: 0px; font-size: 10px; color: red">
+                    {{ newTicket.name ? '' : 'Digite um nome para prosseguir' }}
+                </p>
+            </div>
+            <div class="col-md-6">
+                <label for="subject">Assunto</label>
+                <input type="text" id="subject" name="subject" [(ngModel)]="newTicket.subject">
+                <p style="margin: 0px; font-size: 10px; color: red">
+                    {{ newTicket.subject ? '' : 'Digite um assunto para prosseguir' }}
+                </p>
+            </div>
+            <div class="col-md-6">
+                <label for="">Fila / Categoria</label>
+                <select name="" id="" [(ngModel)]="newTicket.category">
+                    <option value=""></option>
+                    <option [value]="category.category" *ngFor="let category of categories">{{ category.fila}}</option>
+                </select>
+                <p style="margin: 0px; font-size: 10px; color: red">
+                    {{ newTicket.category ? '' : 'Escolha uma fila/categoria para prosseguir!' }}
+                </p>
+            </div>
+            <div class="col-md-12">
+                <label for="">Descrição</label>
+                <textarea name="" id="" cols="15" rows="3" [(ngModel)]="newTicket.description"></textarea>
+                <p style="margin: 0px; font-size: 10px; color: red">
+                    {{ newTicket.description ? '' : 'Digite uma descrição para prosseguir' }}
+                </p>
+            </div>
+            <div class="col-md-12" style="text-align: right;padding-top: 25px">
+                <button (click)="createTicket()">
+                    Criar ticket
+                </button>
+            </div>
+        </div>
+    </ng-container>
+
+</div>

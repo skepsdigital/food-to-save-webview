@@ -1,0 +1,223 @@
+<div class="notification-app-container" *ngIf="!isLogged">
+    <div class="notification-app">
+        <div class="row">
+            <div class="col-md-12">
+                <img src="./../../../assets/skeps_logo.png" alt="">
+            </div>
+    
+            <div class="col-md-12 form-input-container">
+                <label for="">E-mail</label>
+                <input type="email" [(ngModel)]="credentials.email" placeholder="Digite o seu e-mail">
+            </div>
+    
+            <div class="col-md-12 form-input-container">
+                <label for="">Senha</label>
+                <input type="password" [(ngModel)]="credentials.password" placeholder="Digite a sua senha">
+            </div>
+    
+            <div class="col-md-12 form-input-container">
+                <button (click)="login()">
+                    Login
+                </button>
+            </div>
+
+            <div class="col-md-12 text-center mt-3">
+                <small style="color: #e0e0e0; font-size: 10px;">Testing: add ?bypass=true to URL</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-container *ngIf="isLogged">
+
+    <app-blip-ticket-foodtosave></app-blip-ticket-foodtosave>
+
+    <div class="container">
+        
+        <div class="row filter-pipeline">
+    
+            <div class="col-md-12">
+                <h2>Filtros:</h2>
+            </div>
+
+            <div class="col-md-3 filter-text">
+                <label for="">
+                    E-mail:
+                </label>
+                <input type="text" [(ngModel)]="filter.email">
+            </div>
+    
+            <div class="col-md-3 filter-text">
+                <label for="">
+                    Id:
+                </label>
+                <input type="text" [(ngModel)]="filter.id">
+            </div>
+            <div class="col-md-3 filter-text">
+                <label for="">
+                    Ativo:
+                </label>
+                <select name="" id="" [(ngModel)]="filter.active">
+                    <option value=""></option>
+                    <option value="false">Não</option>
+                    <option *ngFor="let opt of activeFilters" [value]="opt">
+                        {{ opt ? 'Sim' : 'Não' }}
+                    </option>
+                </select>
+            </div>
+            <!-- <div class="col-md-3 filter-text">
+                <label for="">
+                    Cliente:
+                </label>
+                
+                <select name="" id="" [(ngModel)]="filter.customerIdentity">
+                    <option value=""></option>
+                    <option [value]="customer" *ngFor="let customer of customers">
+                        {{ customer.replace('@0mn.io', '').replace('%40', '@') }}
+                    </option>
+                </select>
+            </div>
+            <div class="col-md-3 filter-text">
+                <label for="">
+                    Atendente:
+                </label>
+                <select name="" id="" [(ngModel)]="filter.agentIdentity">
+                    <option value=""></option>
+                    <option [value]="agent.identity" *ngFor="let agent of agents">
+                        {{ agent.identity.replace('@blip.ai', '').replace('%40', '@') }}
+                    </option>
+                </select>
+            </div> -->
+        </div>
+    
+        <div class="row pipeline-head">
+            <div class="col-4">
+                <h4>
+                    Novo (Total: {{newTickets.length}})
+                </h4>
+            </div>
+            <div class="col-4">
+                <h4>
+                    Em atendimento (Total: {{openedTickets.length}})
+                </h4>
+            </div>
+            <div class="col-4">
+                <h4>
+                    Respondidos (Total: {{closedTickets.length}})
+                </h4>
+            </div>
+        </div>
+    
+        <div class="row">
+            <div class="col-4 pipeline-stage">
+                
+                <div class="row">
+                    <ng-container *ngFor="let ticket of newTickets">
+                        <ng-container *ngIf="( (filter.id.length == 0 && filter.email.length == 0) || (filter.id.length > 0 && filter.id == ticket.movideskId) || (filter.email.length > 0 && ticket.customerIdentity.indexOf(filter.email.replace('@', '%40')) != -1) )">
+                            <div class="col-md-4 card-pipeline"  *ngIf="(!filter.active) || (filter.active == 'false') || (filter.active && ticket.isActive)">
+    
+                                <ng-container>
+                                    <h4 style="cursor: pointer; color: #45ce8b;" (click)="openMovideskTicketHistory(ticket.customerIdentity)">#{{ ticket.movideskId }} / Ticket Blip {{ ticket.sequentialId }}</h4>
+                                    <h4>
+                                        {{ getContactEmail(ticket.customerIdentity) }}
+                                    </h4>
+                                    <p>E-mail ativo: {{ ticket.isActive ? 'Sim' : 'Não' }} </p>
+                                    <p>
+                                        Time:
+                                    </p>
+                                    <select name="" id="" [(ngModel)]="ticket.team" (change)="changeTeam(ticket)">
+                                        <option value=""></option>
+                                        <option [value]="team.name" *ngFor="let team of teams">
+                                            {{ team.name }}
+                                        </option>
+                                    </select>
+                                    <p>Atendente:</p>
+                                    <select name="" id="" [(ngModel)]="ticket.agentIdentity" (change)="changeAgent(ticket)">
+                                        <option value=""></option>
+                                        <option [value]="agent.identity" *ngFor="let agent of listAttendants(ticket)">
+                                            {{ agent.identity.split('@blip.ai')[0].replace('%40', '@') }}
+                                        </option>
+                                    </select>
+                                </ng-container>
+                            </div>
+                        </ng-container>
+
+                    </ng-container>
+                  
+                </div>
+                
+            </div>
+            <div class="col-4 pipeline-stage">
+    
+                <div class="row">
+                    <ng-container *ngFor="let ticket of openedTickets">
+                        <ng-container *ngIf="( (filter.id.length == 0 && filter.email.length == 0) || (filter.id.length > 0 && filter.id == ticket.movideskId) || (filter.email.length > 0 && ticket.customerIdentity.indexOf(filter.email.replace('@', '%40')) != -1) )">
+                            <div class="col-md-4 card-pipeline" *ngIf="(!filter.active) || (filter.active == 'false') || (filter.active && ticket.isActive)">
+    
+                                <ng-container *ngIf="(!filter.active) || (filter.active == 'false') || (filter.active && ticket.isActive)">
+                                    <h4 style="cursor: pointer; color: #45ce8b;" (click)="openMovideskTicketHistory(ticket.customerIdentity)">#{{ ticket.movideskId }} / Ticket Blip {{ ticket.sequentialId }}</h4>
+                                    <h4>
+                                        {{ getContactEmail(ticket.customerIdentity) }}
+                                    </h4>
+                                    <p>E-mail ativo: {{ ticket.isActive ? 'Sim' : 'Não' }} </p>
+                                    <p>
+                                        Time:
+                                    </p>
+                                    <select name="" id="" [(ngModel)]="ticket.team" (change)="changeTeam(ticket)">
+                                        <option value=""></option>
+                                        <option [value]="team.name" *ngFor="let team of teams">
+                                            {{ team.name }}
+                                        </option>
+                                    </select>
+                                    <p>Atendente:</p>
+                                    <select name="" id="" [(ngModel)]="ticket.agentIdentity" (change)="changeAgent(ticket)">
+                                        <option value=""></option>
+                                        <option [value]="agent.identity" *ngFor="let agent of listAttendants(ticket)">
+                                            {{ agent.identity.split('@blip.ai')[0].replace('%40', '@') }}
+                                        </option>
+                                    </select>
+                                </ng-container>
+                            </div>
+                        </ng-container>        
+                    </ng-container>
+                </div>
+            </div>
+            <div class="col-4 pipeline-stage">
+                <ng-container *ngFor="let ticket of closedTickets">
+
+                    <ng-container *ngIf="( (filter.id.length == 0 && filter.email.length == 0) || (filter.id.length > 0 && filter.id == ticket.movideskId) || (filter.email.length > 0 && ticket.customerIdentity.indexOf(filter.email.replace('@', '%40')) != -1) )">
+                        <ng-container *ngIf="( (filter.id.length == 0 && filter.email.length == 0) || (filter.id.length > 0 && filter.id == ticket.movideskId) || (filter.email.length > 0 && ticket.customerIdentity.indexOf(filter.email.replace('@', '%40')) != -1) )">
+                            <div class="col-md-4 card-pipeline" *ngIf="(!filter.active) || (filter.active == 'false') || (filter.active && ticket.isActive)">
+    
+                                <ng-container>
+                                    <h4 style="cursor: pointer; color: #45ce8b;" (click)="openMovideskTicketHistory(ticket.customerIdentity)">#{{ ticket.movideskId }} / Ticket Blip {{ ticket.sequentialId }}</h4>
+                                    <h4>
+                                        {{ getContactEmail(ticket.customerIdentity) }}
+                                    </h4>
+                                    <p>E-mail ativo: {{ ticket.isActive ? 'Sim' : 'Não' }} </p>
+                                    <p>
+                                        Time:
+                                    </p>
+                                    <select name="" id="" [(ngModel)]="ticket.team" (change)="changeTeam(ticket)">
+                                        <option value=""></option>
+                                        <option [value]="team.name" *ngFor="let team of teams">
+                                            {{ team.name }}
+                                        </option>
+                                    </select>
+                                    <p>Atendente:</p>
+                                    <select name="" id="" [(ngModel)]="ticket.agentIdentity" (change)="changeAgent(ticket)">
+                                        <option value=""></option>
+                                        <option [value]="agent.identity" *ngFor="let agent of listAttendants(ticket)">
+                                            {{ agent.identity.split('@blip.ai')[0].replace('%40', '@') }}
+                                        </option>
+                                    </select>
+                                </ng-container>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                    
+                </ng-container>
+            </div>
+        </div>
+    </div>
+</ng-container>

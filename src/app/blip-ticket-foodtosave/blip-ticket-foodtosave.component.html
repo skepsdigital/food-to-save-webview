@@ -1,0 +1,78 @@
+<div class="container">
+    <!-- <div class="row" style="padding: 40px 0px;">
+        <img src="./../../assets/food_to_save_orange.png" alt="" style="width: 64px;">
+    </div> -->
+</div>
+
+<div class="container" style="padding-top: 50px">
+
+    <ng-container *ngIf="showCreateTicketSuccess">
+        <div class="row">
+            <div class="col-md-12">
+                <p>
+                    {{ createTicketMsg }}
+            </div>
+            <div class="col-md-12" style="text-align: center;padding-top: 25px">
+                <button (click)="showCreateTicketSuccess = false" style="color: #45ce8b;">
+                    Criar novo ticket
+                </button>
+            </div>
+        </div>
+    </ng-container>
+    
+
+    <ng-container *ngIf="!showCreateTicketSuccess">
+
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Criar um novo ticket</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <label for="">E-mail</label>
+                <input type="email" [(ngModel)]="newTicket.email">
+                <p style="margin: 0px; font-size: 10px; color: red">
+                    {{ newTicket.email ? '' : 'Digite um e-mail para prosseguir' }}
+                </p>
+            </div>
+            <div class="col-md-6">
+                <label for="">Nome</label>
+                <input type="text" [(ngModel)]="newTicket.name">
+                <p style="margin: 0px; font-size: 10px; color: red">
+                    {{ newTicket.name ? '' : 'Digite um nome para prosseguir' }}
+                </p>
+            </div>
+            <div class="col-md-6">
+                <label for="">Assunto</label>
+                <input type="text" [(ngModel)]="newTicket.subject">
+                <p style="margin: 0px; font-size: 10px; color: red">
+                    {{ newTicket.subject ? '' : 'Digite um assunto para prosseguir' }}
+                </p>
+            </div>
+            <div class="col-md-6">
+                <label for="">Fila / Categoria</label>
+                <select name="" id="" [(ngModel)]="newTicket.category" style="width: 100%;">
+                    <option value=""></option>
+                    <option [value]="category.category" *ngFor="let category of categories">{{ category.fila}}</option>
+                </select>
+                <p style="margin: 0px; font-size: 10px; color: red">
+                    {{ newTicket.category ? '' : 'Escolha uma fila/categoria para prosseguir!' }}
+                </p>
+            </div>
+            <div class="col-md-12">
+                <label for="">Descrição</label>
+                <textarea name="" id="" cols="15" rows="3" [(ngModel)]="newTicket.description"></textarea>
+                <p style="margin: 0px; font-size: 10px; color: red">
+                    {{ newTicket.description ? '' : 'Digite uma descrição para prosseguir' }}
+                </p>
+            </div>
+            <div class="col-md-12" style="text-align: right;padding-top: 25px">
+                <button (click)="createTicket()" style="background-color: #45ce8b">
+                    Criar ticket
+                </button>
+            </div>
+        </div>
+    </ng-container>
+
+</div>
