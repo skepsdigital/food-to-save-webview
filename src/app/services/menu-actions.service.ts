@@ -44,20 +44,27 @@ export class MenuActionsService {
 
   async handleTrackingQuestions(token: string, currentOrder?: Order): Promise<MenuActionsResponse> {
     try {
-      this.blipService.trackEvent("duvidasRastreio", "exibicao", PRD_ROUTER_KEY);
+      this.blipService.trackEvent("duvidasRastreioCount", String(currentOrder?.number) || "sem pedido", PRD_ROUTER_KEY);
 
       this.nextPage = "duvidasRastreio";
-      
+
       if (!currentOrder) {
         this.canOpenchat = true;
-        this.blipService.trackEvent("duvidasRastreio", "sem pedido", PRD_ROUTER_KEY, {token: token});
+        this.blipService.trackEvent("duvidasRastreioOrder", "sem pedido", PRD_ROUTER_KEY, { token: token });
         return this.mountResponse("Não foi possível encontrar informações sobre o seu pedido. Por favor, feche o app e abra novamente.");
       }
 
       if (currentOrder.delivery_type !== "DELIVERY") {
-        this.blipService.trackEvent("duvidasRastreio", `!delivery-${currentOrder.delivery_type}`, PRD_ROUTER_KEY, {token: token});
+        this.blipService.trackEvent("duvidasRastreioOrder", `!delivery-${currentOrder.delivery_type}`, PRD_ROUTER_KEY, { token: token });
         this.canOpenchat = true;
         return this.mountResponse("Como esse é um pedido para retirada no local, ele não tem rastreio. Mas pode ficar tranquilo! É só ir até o local no mesmo dia da compra e mostrar seu número de pedido para garantir a sua sacola. 😊");
+      }
+
+      this.blipService.trackEvent("duvidasRastreioOrder", `${currentOrder.status}`, PRD_ROUTER_KEY, { token: token });
+      
+      if (currentOrder.status == "CONCLUDED") {
+        this.canOpenchat = false;
+        return this.mountResponse("Seu pedido foi entregue! 🎉 Se tiver qualquer problema, é só entrar em contato com a gente. Selecione \"Não recebi meu pedido\" no menu anterior pra que possamos te ajudar!");
       }
 
       const response = await this.http.get(
@@ -70,13 +77,9 @@ export class MenuActionsService {
         }
       ).toPromise();
 
-      console.log("Delivery details response: ", JSON.stringify(response, null, 2));
-
       const deliveryDetailsResponse = response as DeliveryDetailsResponse;
 
-      console.log("Delivery details response: ", JSON.stringify(deliveryDetailsResponse, null, 2));
-
-      this.blipService.trackEvent("duvidasRastreio", `status-${deliveryDetailsResponse.status}`, PRD_ROUTER_KEY, {token: token, currentOrder: currentOrder});
+      this.blipService.trackEvent("duvidasRastreioDelivery", `${deliveryDetailsResponse.status}`, PRD_ROUTER_KEY, { token: token, currentOrder: currentOrder });
       var message = "";
       switch (deliveryDetailsResponse.status) {
         case "CANCELLED":
@@ -99,6 +102,7 @@ export class MenuActionsService {
           break;
         case "DELIVERED":
         case "FINISHED":
+        case "CONCLUDED":
           this.canOpenchat = false;
           message = "Seu pedido foi entregue! 🎉 Se tiver qualquer problema, é só entrar em contato com a gente. Selecione \"Não recebi meu pedido\" no menu anterior pra que possamos te ajudar!";
           break;
@@ -115,12 +119,12 @@ export class MenuActionsService {
           message = "Seu pedido foi devolvido. Se tiver qualquer problema, é só entrar em contato com a gente.";
           break;
         default:
-          this.blipService.trackEvent("duvidasRastreio", `untreated-${deliveryDetailsResponse.status}`, PRD_ROUTER_KEY, {token: token, currentOrder: currentOrder});
+          this.blipService.trackEvent("duvidasRastreio", `untreated-${deliveryDetailsResponse.status}`, PRD_ROUTER_KEY, { token: token, currentOrder: currentOrder });
           throw new Error('Status de entrega não reconhecido');
       }
       return this.mountResponse(message, deliveryDetailsResponse, this.canOpenchat);
     } catch (e) {
-      this.blipService.trackEvent("duvidasRastreio", "error", PRD_ROUTER_KEY, {token: token, currentOrder: currentOrder, error: e});
+      this.blipService.trackEvent("duvidasRastreio", "error", PRD_ROUTER_KEY, { token: token, currentOrder: currentOrder, error: e });
       console.error("Error on handleTrackingQuestions: ", JSON.stringify(e, null, 2));
       this.canOpenchat = true;
       return this.mountResponse("Ocorreu um erro ao buscar as informações de entrega do seu pedido. Por favor, tente novamente mais tarde.");

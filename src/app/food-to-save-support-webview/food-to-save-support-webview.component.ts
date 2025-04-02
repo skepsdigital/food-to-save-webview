@@ -238,7 +238,7 @@ export class FoodToSaveSupportWebviewComponent implements OnInit {
           this.isEmailPriority = emails.filter((e: any) => e === this.user.email!.toUpperCase()).length > 0;
         }
 
-        await this.getCurrentOrder();
+        await this.getCurrentOrder(true);
         this.isCancellable = this.canCancelOrder();
 
         this.firstName = this.user && this.user.name ? this.user.name : '';
@@ -301,8 +301,8 @@ export class FoodToSaveSupportWebviewComponent implements OnInit {
     // }).toPromise();
   }
 
-  async getCurrentOrder() {
-    if(this.currentOrder != null)return this.currentOrder;
+  async getCurrentOrder(refresh = false) {
+    if(this.currentOrder != null && !refresh)return this.currentOrder;
 
     this.orders = await this.http.get<Order[]>(`${this.url}/api/v1/orders?first=0&limit=3`, {
       headers: {
@@ -685,6 +685,7 @@ export class FoodToSaveSupportWebviewComponent implements OnInit {
 
   async openProductWrong(message: string) {
     try {
+      this.getCurrentOrder(true);
       this.menuActions.handleMenuAction(message, {
         token: this.token,
         currentOrder: this.currentOrder? this.currentOrder : undefined,
