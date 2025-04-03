@@ -79,7 +79,7 @@ export class MenuActionsService {
 
       const deliveryDetailsResponse = response as DeliveryDetailsResponse;
 
-      this.blipService.trackEvent("duvidasRastreioDelivery", `${deliveryDetailsResponse.status}`, PRD_ROUTER_KEY, { token: token, currentOrder: currentOrder });
+      this.blipService.trackEvent("duvidasRastreioDelivery", `${deliveryDetailsResponse.status}`, PRD_ROUTER_KEY, { token: token, currentOrderNumber: currentOrder.number });
       var message = "";
       switch (deliveryDetailsResponse.status) {
         case "CANCELLED":

@@ -4,6 +4,7 @@ import { Component, ComponentFactoryResolver, EventEmitter, Injectable, OnInit, 
 import { ActivatedRoute } from '@angular/router';
 import * as moment from 'moment';
 import { MenuActionsService } from '../services/menu-actions.service';
+import { BlipService } from '../services/blip.service';
 import { environment } from 'src/environments/environment';
 
 // @ts-ignore
@@ -141,8 +142,8 @@ export class FoodToSaveSupportWebviewComponent implements OnInit {
     }
   ];
 
-  cancelReason = '';
-
+  cancelReason = ''
+  phrase: string = '';
   question: any = '';
   chat: any = '';
   token: any = '';
@@ -166,15 +167,19 @@ export class FoodToSaveSupportWebviewComponent implements OnInit {
 
   isEmailPriority = false;
 
-  currentTab: any = '';
+  currentTab: string = '';
 
   isCancellable: boolean = false;
+  private blipService: BlipService;
 
   constructor(
     private http: HttpClient,
     private route: ActivatedRoute,
-    private menuActions: MenuActionsService  // Add this line
-  ) { }
+    private menuActions: MenuActionsService
+    
+  ) { 
+    this.blipService = new BlipService(this.http);
+  }
 
   async ngOnInit() {
 
@@ -686,6 +691,7 @@ export class FoodToSaveSupportWebviewComponent implements OnInit {
   async openProductWrong(message: string) {
     try {
       this.getCurrentOrder(true);
+      this.phrase = message;
       this.menuActions.handleMenuAction(message, {
         token: this.token,
         currentOrder: this.currentOrder? this.currentOrder : undefined,
@@ -881,8 +887,12 @@ export class FoodToSaveSupportWebviewComponent implements OnInit {
 
   }
 
-  async feedback(feedback: any, phrase: any) {
-    // this.canSendMsg = true;
+  async feedback(feedback: string, phrase?: any) {
+    if (phrase)this.phrase = phrase;
+
+    this.blipService.trackEvent(this.currentTab, feedback, PRD_ROUTER_KEY);
+    this.blipService.trackEvent(this.currentTab + "-" + this.phrase, feedback, PRD_ROUTER_KEY);
+    
 
     // let analyticsResult = await this.http.post(`https://foodtosave.http.msging.net/commands`, {
     //   "id": uuidv4(),
@@ -903,7 +913,7 @@ export class FoodToSaveSupportWebviewComponent implements OnInit {
 
     if (feedback == 'negative') {
       if (this.user && this.user.email && this.user.email.length > 0) {
-        this.openChat(phrase);
+        this.openChat(this.phrase);
       } else {
         this.enableTabs = false;
         this.isEnableChat = false;
